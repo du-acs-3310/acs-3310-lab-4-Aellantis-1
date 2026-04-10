@@ -1,54 +1,75 @@
 // Lab 4 — Date Utilities
-// Implement each function according to the description.
+
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+function parseDate(dateString: string): Date | null {
+  const d = new Date(dateString);
+  return isNaN(d.getTime()) ? null : d;
+}
 
 // 1. formatShortDate
-// Input: ISO date string
-// Output: string in YYYY-MM-DD format or null if invalid
 export function formatShortDate(dateString: string): string | null {
-  throw new Error('Not implemented')
+  const d = parseDate(dateString);
+  if (!d) return null;
+
+  return d.toISOString().slice(0, 10);
 }
 
 // 2. isBefore
-// Input: two date strings
-// Output: true if first date is earlier than second, otherwise false
-// Return false if either date is invalid
 export function isBefore(a: string, b: string): boolean {
-  throw new Error('Not implemented')
+  const da = parseDate(a);
+  const db = parseDate(b);
+
+  if (!da || !db) return false;
+
+  return da.getTime() < db.getTime();
 }
 
 // 3. daysBetween
-// Input: two date strings
-// Output: number of full days between dates or null if invalid
-// Return the number of FULL days between dates (round down)
 export function daysBetween(a: string, b: string): number | null {
-  throw new Error('Not implemented')
+  const da = parseDate(a);
+  const db = parseDate(b);
+
+  if (!da || !db) return null;
+
+  const diff = Math.abs(db.getTime() - da.getTime());
+  return Math.floor(diff / MS_PER_DAY);
 }
 
 // 4. sortPostsByCreatedAt
-// Input: array of posts with createdAt property
-// Output: new array sorted newest first
-// Do not mutate the original array
-
-// Minimal post shape needed for this challenge
 type Post = {
-  createdAt: string
-}
+  createdAt: string;
+};
 
 export function sortPostsByCreatedAt(posts: Post[]): Post[] {
-  throw new Error('Not implemented')
+  return [...posts].sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() -
+      new Date(a.createdAt).getTime()
+  );
 }
 
 // 5. relativeDayLabel
-// Input: target date string and current date string
-// Output: 'today', 'yesterday', or '<n> days ago'
-// Return null if invalid
-export function relativeDayLabel(target: string, today: string): string | null {
-  throw new Error('Not implemented')
+export function relativeDayLabel(
+  target: string,
+  today: string
+): string | null {
+  const t = parseDate(target);
+  const d = parseDate(today);
+
+  if (!t || !d) return null;
+
+  const tUTC = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate());
+  const dUTC = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const diffDays = Math.floor((dUTC - tUTC) / MS_PER_DAY);
+
+  if (diffDays === 0) return "today";
+  if (diffDays === 1) return "yesterday";
+  return `${diffDays} days ago`;
 }
 
 // 6. isValidDateString
-// Input: string
-// Output: true if valid date, false otherwise
 export function isValidDateString(dateString: string): boolean {
-  throw new Error('Not implemented')
+  return parseDate(dateString) !== null;
 }
